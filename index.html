@@ -142,6 +142,11 @@
             font-size: 0.7rem; 
             border-radius: 1rem; 
         } 
+        .edit-note {
+            padding: 0.3rem 1rem; 
+            font-size: 0.7rem; 
+            border-radius: 1rem; 
+        }
         .delete-note:hover { background: #dc2626; } 
         hr { margin: 1rem 0; } 
         footer { 
@@ -251,27 +256,7 @@
                 return; 
             }
 
-            // In renderNotes(), create the edit button: 
-            const editBtn = document.createElement("button"); 
-            editBtn.textContent = "✏ Edit"; 
-            editBtn.setAttribute("data-action", "edit"); 
-            editBtn.setAttribute("data-id", note.id); 
             
-            // In the event delegation listener, handle "edit": 
-            const editTarget = e.target.closest('[data-action="edit"]'); 
-            if (editTarget) { 
-                const id    = parseInt(editTarget.getAttribute("data-id"), 10); 
-                const found = notes.find(n => n.id === id); 
-                if (found) { 
-                    // BOM: prompt() returns new string or null 
-                    const newTitle = prompt("New title:", found.title); 
-                    if (newTitle !== null && newTitle.trim() !== "") { 
-                    found.title = newTitle.trim(); 
-                    renderNotes(); 
-                    } 
-                } 
-            }
-
 
             notes.forEach(note => { 
                 // wrapper div 
@@ -290,10 +275,17 @@
                 deleteBtn.textContent = "🗑🗑 Delete"; 
                 deleteBtn.classList.add("delete-note"); 
                 deleteBtn.setAttribute("data-action", "delete"); 
-                deleteBtn.setAttribute("data-id",     note.id); 
+                deleteBtn.setAttribute("data-id", note.id); 
+
+                const editBtn = document.createElement("button"); 
+                editBtn.textContent = "✏ Edit"; 
+                editBtn.classList.add("edit-note");
+                editBtn.setAttribute("data-action", "edit"); 
+                editBtn.setAttribute("data-id", note.id);
             
                 titleDiv.appendChild(titleSpan); 
                 titleDiv.appendChild(deleteBtn); 
+                titleDiv.appendChild(editBtn);
             
                 // content paragraph 
                 const contentP = document.createElement("p"); 
@@ -303,6 +295,9 @@
                 noteDiv.appendChild(titleDiv); 
                 noteDiv.appendChild(contentP); 
                 notesContainer.appendChild(noteDiv); 
+            
+               
+
             }); 
             
             updateCounter();
@@ -364,6 +359,19 @@
                 const id = parseInt(btn.getAttribute("data-id"), 10); 
                 deleteNoteById(id); 
             } 
+            const editTarget = e.target.closest('[data-action="edit"]'); 
+            if (editTarget) { 
+                const id    = parseInt(editTarget.getAttribute("data-id"), 10); 
+                const found = notes.find(n => n.id === id); 
+                if (found) { 
+                    // BOM: prompt() returns new string or null 
+                    const newTitle = prompt("New title:", found.title); 
+                    if (newTitle !== null && newTitle.trim() !== "") { 
+                        found.title = newTitle.trim(); 
+                        renderNotes(); 
+                    } 
+                } 
+            }
         }); 
 
         function updateWindowSize() { 
